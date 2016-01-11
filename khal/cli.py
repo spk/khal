@@ -42,13 +42,14 @@ from .terminal import colored
 
 days_option = click.option('--days', default=None, type=int,
                            help='How many days to include.')
+week_option = click.option('--week','-w', help=('Include all events in one week (Mo-Su)'), is_flag=True)
 events_option = click.option('--events', default=None, type=int,
                              help='How many events to include.')
 dates_arg = click.argument('dates', nargs=-1)
 
 
 def time_args(f):
-    return dates_arg(events_option(days_option(f)))
+    return dates_arg(events_option(week_option(days_option(f))))
 
 
 def _multi_calendar_select_callback(ctx, option, calendars):
@@ -234,7 +235,7 @@ def _get_cli():
     @click.pass_context
     @click.option('--full', '-f', help=('Print description and location with event'),
                   is_flag=True)
-    def calendar(ctx, days, events, dates, full=False):
+    def calendar(ctx, days, events, dates, week, full=False):
         '''Print calendar with agenda.'''
         controllers.calendar(
             build_collection(ctx),
@@ -251,8 +252,9 @@ def _get_cli():
             multiple=ctx.obj['conf']['highlight_days']['multiple'],
             color=ctx.obj['conf']['highlight_days']['color'],
             highlight_event_days=ctx.obj['conf']['default']['highlight_event_days'],
+            bold_for_light_color=ctx.obj['conf']['view']['bold_for_light_color'],
             full=full,
-            bold_for_light_color=ctx.obj['conf']['view']['bold_for_light_color']
+            week=week,
         )
 
     @cli.command()
@@ -261,7 +263,7 @@ def _get_cli():
     @click.pass_context
     @click.option('--full', '-f', help=('Print description and location with event'),
                   is_flag=True)
-    def agenda(ctx, days, events, dates, full=False):
+    def agenda(ctx, days, events, dates, week, full=False):
         '''Print agenda.'''
         controllers.agenda(
             build_collection(ctx),
@@ -272,6 +274,7 @@ def _get_cli():
             locale=ctx.obj['conf']['locale'],
             days=days or ctx.obj['conf']['default']['days'],
             events=events,
+            week=week,
             full=full,
             bold_for_light_color=ctx.obj['conf']['view']['bold_for_light_color']
         )
