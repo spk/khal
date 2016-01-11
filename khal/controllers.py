@@ -96,7 +96,8 @@ def get_agenda(collection, locale, dates=None, firstweekday=0, days=None, events
             sys.exit(1)
 
     if week:
-        dates = [d - datetime.timedelta(d.weekday()) for d in dates]
+        dates = [d - datetime.timedelta((d.weekday() - firstweekday)%7)
+                 for d in dates]
         days = 7
 
     if days is not None:

@@ -42,7 +42,8 @@ from .terminal import colored
 
 days_option = click.option('--days', default=None, type=int,
                            help='How many days to include.')
-week_option = click.option('--week','-w', help=('Include all events in one week (Mo-Su)'), is_flag=True)
+week_option = click.option('--week', '-w',
+                           help=('Include all events in one week.'), is_flag=True)
 events_option = click.option('--events', default=None, type=int,
                              help='How many events to include.')
 dates_arg = click.argument('dates', nargs=-1)
