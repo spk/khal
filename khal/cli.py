@@ -238,6 +238,8 @@ def _get_cli():
                   is_flag=True)
     def calendar(ctx, days, events, dates, week, full=False):
         '''Print calendar with agenda.'''
+        if week and days:
+            raise click.UsageError('Cannot use --days and -week at the same time.')
         controllers.calendar(
             build_collection(ctx),
             date=dates,
@@ -266,6 +268,8 @@ def _get_cli():
                   is_flag=True)
     def agenda(ctx, days, events, dates, week, full=False):
         '''Print agenda.'''
+        if week and days:
+            raise click.UsageError('Cannot use --days and -week at the same time.')
         controllers.agenda(
             build_collection(ctx),
             date=dates,
