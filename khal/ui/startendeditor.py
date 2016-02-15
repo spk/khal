@@ -92,13 +92,8 @@ class StartEndEditor(urwid.WidgetWrap):
         self._enddt, self._original_end = end, end
         self._last_delta = end - start
         self.on_date_change = on_date_change
-        # TODO Remove self.dts, we only need this for the length of the strings
-        # to edit
-        self.dts = StartEnd(  # as in DateTimeString
-            startdate=start.strftime(self.conf['locale']['longdateformat']),
-            starttime=start.strftime(self.conf['locale']['timeformat']),
-            enddate=end.strftime(self.conf['locale']['longdateformat']),
-            endtime=end.strftime(self.conf['locale']['timeformat']))
+        self._datewidth = len(start.strftime(self.conf['locale']['longdateformat']))
+        self._timewidth = len(start.strftime(self.conf['locale']['timeformat']))
         # this will contain the widgets for [start|end] [date|time]
         self.widgets = StartEnd(None, None, None, None)
 
@@ -213,8 +208,7 @@ class StartEndEditor(urwid.WidgetWrap):
         :type state: bool
         """
         self.allday = state
-        datewidth = len(self.dts.startdate) + 7
-
+        datewidth = self._datewidth + 7
         # startdate
         edit = ValidatedEdit(
             dateformat=self.conf['locale']['longdateformat'],
@@ -244,7 +238,7 @@ class StartEndEditor(urwid.WidgetWrap):
             self.widgets.starttime = urwid.Text('')
             self.widgets.endtime = urwid.Text('')
         elif state is False:
-            timewidth = len(self.dts.starttime) + 1
+            timewidth = self._timewidth + 1
             edit = ValidatedEdit(
                 dateformat=self.conf['locale']['timeformat'],
                 EditWidget=TimeWidget,
@@ -252,7 +246,7 @@ class StartEndEditor(urwid.WidgetWrap):
                 edit_text=self.startdt.strftime(self.conf['locale']['timeformat']),
             )
             edit = urwid.Padding(
-                edit, align='left', width=len(self.dts.starttime) + 1, left=1)
+                edit, align='left', width=self._timewidth + 1, left=1)
             self.widgets.starttime = edit
 
             edit = ValidatedEdit(
@@ -262,7 +256,7 @@ class StartEndEditor(urwid.WidgetWrap):
                 edit_text=self.enddt.strftime(self.conf['locale']['timeformat']),
             )
             edit = urwid.Padding(
-                edit, align='left', width=len(self.dts.endtime) + 1, left=1)
+                edit, align='left', width=self._timewidth + 1, left=1)
             self.widgets.endtime = edit
 
         columns = NPile([
